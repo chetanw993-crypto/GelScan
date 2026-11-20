@@ -7,6 +7,7 @@ import {
   Sparkles,
   CheckCircle2,
   AlertTriangle,
+  HeartPulse,
 } from 'lucide-react';
 import { EstimationResult } from '../utils/calibrationEngine';
 
@@ -14,12 +15,14 @@ interface PHEstimateCardProps {
   estimation: EstimationResult | null;
   estimationMode: 'interpolated' | 'nearest';
   setEstimationMode: (mode: 'interpolated' | 'nearest') => void;
+  onViewWoundCare?: () => void;
 }
 
 export const PHEstimateCard: React.FC<PHEstimateCardProps> = ({
   estimation,
   estimationMode,
   setEstimationMode,
+  onViewWoundCare,
 }) => {
   if (!estimation) {
     return (
@@ -42,20 +45,23 @@ export const PHEstimateCard: React.FC<PHEstimateCardProps> = ({
   } = estimation;
 
   // Determine wound healing context based on pH
-  let woundContext = 'Strong Acid (Chemical / Hydrogel artifact)';
-  let contextBg = 'bg-red-50 text-red-800 border-red-200';
+  let woundContext = 'Acidic Stratum Corneum (pH 4.5 - 5.5)';
+  let contextBg = 'bg-rose-50 text-rose-800 border-rose-200';
 
-  if (estimatedPH >= 4.0 && estimatedPH < 5.5) {
+  if (estimatedPH < 4.0) {
+    woundContext = 'Strong Acid (Chemical / Hydrogel artifact)';
+    contextBg = 'bg-red-50 text-red-800 border-red-200';
+  } else if (estimatedPH >= 4.0 && estimatedPH < 5.5) {
     woundContext = 'Healthy Intact Skin pH Range (4.5 - 5.5)';
     contextBg = 'bg-rose-50 text-rose-800 border-rose-200';
   } else if (estimatedPH >= 5.5 && estimatedPH < 7.2) {
     woundContext = 'Acute Healing Wound Exudate (5.5 - 7.0)';
     contextBg = 'bg-purple-50 text-purple-800 border-purple-200';
   } else if (estimatedPH >= 7.2 && estimatedPH < 8.2) {
-    woundContext = 'Neutral to Mild Alkaline (Delayed Healing)';
+    woundContext = 'Neutral to Mild Alkaline (Delayed Healing / MMP Activity)';
     contextBg = 'bg-blue-50 text-blue-800 border-blue-200';
   } else if (estimatedPH >= 8.2) {
-    woundContext = 'Alkaline Exudate / Potential Bacterial Biofilm (>8.0)';
+    woundContext = 'Alkaline Exudate / Bacterial Biofilm Risk (>8.0)';
     contextBg = 'bg-teal-50 text-teal-800 border-teal-200';
   }
 
@@ -151,7 +157,6 @@ export const PHEstimateCard: React.FC<PHEstimateCardProps> = ({
         </div>
 
         <div className="relative h-3 rounded-full overflow-hidden shadow-inner bg-gradient-to-r from-red-500 via-purple-500 via-blue-500 via-teal-500 to-amber-500">
-          {/* Active indicator needle */}
           <div
             className="absolute top-0 bottom-0 w-2 bg-white rounded-full shadow-md border border-slate-900 transform -translate-x-1/2 transition-all duration-300"
             style={{ left: `${scalePercent}%` }}
@@ -166,6 +171,17 @@ export const PHEstimateCard: React.FC<PHEstimateCardProps> = ({
           <span className="font-medium">{woundContext}</span>
         </div>
       </div>
+
+      {/* Clinical Care Quick Button */}
+      {onViewWoundCare && (
+        <button
+          onClick={onViewWoundCare}
+          className="w-full py-2 bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-colors"
+        >
+          <HeartPulse className="w-4 h-4 text-rose-600" />
+          <span>View Full Medical Analysis & Recovery Plan &rarr;</span>
+        </button>
+      )}
 
       {/* Second Nearest Point (if interpolated) */}
       {estimationMode === 'interpolated' && secondNearestPoint && (

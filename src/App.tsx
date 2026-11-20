@@ -1,16 +1,7 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
   Camera,
   Image as ImageIcon,
-  MessageCircle,
-  Sparkles,
-  Wifi,
-  Sliders,
-  ShieldCheck,
-  History,
-  Activity,
-  Layers,
-  ArrowRight,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -34,6 +25,7 @@ import {
   updateSampleLabValidation,
   LabSettings,
 } from './utils/storage';
+import { analyzeWoundHealth } from './utils/woundAnalysisEngine';
 
 import { Header } from './components/Header';
 import { CameraScanner } from './components/CameraScanner';
@@ -50,6 +42,7 @@ import { CollegeConnectModal } from './components/CollegeConnectModal';
 import { SampleComparisonModal } from './components/SampleComparisonModal';
 import { ResearchProtocolsModal } from './components/ResearchProtocolsModal';
 import { LabSettingsModal } from './components/LabSettingsModal';
+import { WoundMedicalAnalysisView } from './components/WoundMedicalAnalysisView';
 
 export function App() {
   // Navigation & Modals
@@ -109,7 +102,17 @@ export function App() {
 
   // Save new sample
   const handleSaveSample = (newSample: SampleRecord) => {
-    const updated = addSampleRecord(newSample);
+    const medAnalysis = analyzeWoundHealth(
+      newSample.estimatedPH,
+      'optimal',
+      newSample.filmThicknessMm || 0.25
+    );
+    const sampleWithMedical = {
+      ...newSample,
+      medicalAnalysis: medAnalysis,
+    };
+
+    const updated = addSampleRecord(sampleWithMedical);
     setSamples(updated);
 
     // Confetti effect when sample is recorded!
@@ -286,6 +289,7 @@ export function App() {
                   estimation={estimation}
                   estimationMode={estimationMode}
                   setEstimationMode={setEstimationMode}
+                  onViewWoundCare={() => setActiveTab('woundCare')}
                 />
 
                 {/* Colorimetric RGB/HSV/CIELAB Breakdown Card */}
@@ -295,7 +299,15 @@ export function App() {
           </div>
         )}
 
-        {/* TAB 2: CALIBRATION MATRIX */}
+        {/* TAB 2: WOUND CARE & MEDICAL RECOVERY (NEW) */}
+        {activeTab === 'woundCare' && (
+          <WoundMedicalAnalysisView
+            currentPH={estimation?.estimatedPH ?? null}
+            filmThicknessMm={0.25}
+          />
+        )}
+
+        {/* TAB 3: CALIBRATION MATRIX */}
         {activeTab === 'calibration' && (
           <CalibrationManager
             calibrationPoints={calibrationPoints}
@@ -305,7 +317,7 @@ export function App() {
           />
         )}
 
-        {/* TAB 3: DATA VISUALIZER & CURVES */}
+        {/* TAB 4: DATA VISUALIZER & CURVES */}
         {activeTab === 'visualize' && (
           <DataVisualizer
             calibrationPoints={calibrationPoints}
@@ -313,7 +325,7 @@ export function App() {
           />
         )}
 
-        {/* TAB 4: LAB VALIDATION BENCHMARK */}
+        {/* TAB 5: LAB VALIDATION BENCHMARK */}
         {activeTab === 'validation' && (
           <LabValidationModal
             samples={samples}
@@ -321,12 +333,12 @@ export function App() {
           />
         )}
 
-        {/* TAB 5: SAMPLE HISTORY & EXPORT */}
+        {/* TAB 6: SAMPLE HISTORY & EXPORT */}
         {activeTab === 'history' && (
           <SampleHistoryTable
             samples={samples}
             onDeleteSample={handleDeleteSample}
-            onSelectForValidation={id => {
+            onSelectForValidation={() => {
               setActiveTab('validation');
             }}
             selectedCompareIds={selectedCompareIds}
@@ -336,7 +348,7 @@ export function App() {
           />
         )}
 
-        {/* TAB 6: B.PHARM RESEARCH HUB & PATENT GUIDE */}
+        {/* TAB 7: B.PHARM RESEARCH HUB & PATENT GUIDE */}
         {activeTab === 'research' && <ResearchProtocolsModal />}
       </main>
 
@@ -372,7 +384,7 @@ export function App() {
             <strong>GelScan v2.0 PRO</strong> &bull; B.Pharm Final Year Research Project &bull; {labSettings.collegeName}
           </span>
           <span className="text-[11px] text-slate-400">
-            For academic laboratory research use only. Not certified for direct clinical diagnosis.
+            For academic laboratory research use only. Clinical care protocols follow EWMA / TIME guidelines.
           </span>
         </div>
       </footer>

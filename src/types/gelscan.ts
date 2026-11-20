@@ -37,6 +37,33 @@ export interface CalibrationPoint {
   updatedAt: string;
 }
 
+export type MoistureLevel = 'dry' | 'optimal' | 'maceration_risk';
+
+export type WoundStatePhase =
+  | 'acidic_remodeling'
+  | 'active_granulation'
+  | 'inflammatory_transition'
+  | 'chronic_stalled'
+  | 'alkaline_biofilm_risk';
+
+export interface WoundMedicalAnalysis {
+  phase: WoundStatePhase;
+  phaseTitle: string;
+  biologicalDescription: string;
+  moistureLevel: MoistureLevel;
+  moistureDescription: string;
+  estimatedRecoveryTime: string; // e.g. "7 - 14 Days (Optimal Acute Healing)"
+  healingTrajectory: 'Optimal' | 'Favorable' | 'Mildly Delayed' | 'Stalled / Chronic' | 'Severe / Biofilm Risk';
+  biochemicalStatus: {
+    mmpProteaseActivity: 'Low (Favorable)' | 'Normal' | 'Elevated (Tissue Degrading)' | 'Severe Matrix Breakdown';
+    bacterialBiofilmRisk: 'Minimal' | 'Low' | 'Moderate' | 'High / Pathogenic Colonization';
+    angiogenesisStatus: 'Active & Favorable' | 'Steady' | 'Impaired' | 'Inhibited';
+  };
+  clinicalCareSteps: string[];
+  standardMedicalProcedures: string[];
+  redFlagWarnings: string[];
+}
+
 export interface SampleRecord {
   id: string;
   sampleId: string;
@@ -58,6 +85,7 @@ export interface SampleRecord {
   errorPercentage?: number; // (|phError| / actualLabPH) * 100
   notes?: string;
   imageDataUrl?: string; // thumbnail / snapshot
+  medicalAnalysis?: WoundMedicalAnalysis;
 }
 
 export interface WhiteReference {

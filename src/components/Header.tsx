@@ -10,6 +10,7 @@ import {
   Settings,
   Sparkles,
   Layers,
+  HeartPulse,
 } from 'lucide-react';
 import { LabSettings } from '../utils/storage';
 
@@ -36,6 +37,7 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const navTabs = [
     { id: 'scanner', label: 'Scanner & Analysis', icon: Activity },
+    { id: 'woundCare', label: 'Wound Care & Recovery', icon: HeartPulse },
     { id: 'calibration', label: 'Calibration Matrix', icon: Sliders },
     { id: 'visualize', label: 'Research Analytics', icon: BarChart3 },
     { id: 'validation', label: 'Lab Validation', icon: CheckCircle2 },
@@ -108,7 +110,7 @@ export const Header: React.FC<HeaderProps> = ({
                 </span>
               </div>
               <p className="text-xs text-slate-500">
-                Anthocyanin-sensitive wound dressing film digital colorimetric analysis
+                Anthocyanin-sensitive wound dressing film digital colorimetric analysis & clinical diagnostics
               </p>
             </div>
           </div>
