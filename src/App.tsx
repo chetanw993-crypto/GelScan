@@ -28,6 +28,7 @@ import {
 import { analyzeWoundHealth } from './utils/woundAnalysisEngine';
 
 import { Header } from './components/Header';
+import { LandingPage } from './components/LandingPage';
 import { CameraScanner } from './components/CameraScanner';
 import { GalleryUploader } from './components/GalleryUploader';
 import { ColorAnalysisCard } from './components/ColorAnalysisCard';
@@ -45,8 +46,8 @@ import { LabSettingsModal } from './components/LabSettingsModal';
 import { WoundMedicalAnalysisView } from './components/WoundMedicalAnalysisView';
 
 export function App() {
-  // Navigation & Modals
-  const [activeTab, setActiveTab] = useState<string>('scanner');
+  // Navigation & Modals: default to 'home' landing page so visitors and examiners see the full project showcase first!
+  const [activeTab, setActiveTab] = useState<string>('home');
   const [scannerSource, setScannerSource] = useState<'camera' | 'gallery'>('camera');
   const [isCollegeConnectOpen, setIsCollegeConnectOpen] = useState<boolean>(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
@@ -204,6 +205,14 @@ export function App() {
 
       {/* Main App Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6">
+        {/* TAB 0: LANDING PAGE & TEAM SHOWCASE */}
+        {activeTab === 'home' && (
+          <LandingPage
+            onLaunchApp={tab => setActiveTab(tab || 'scanner')}
+            onOpenCollegeConnect={() => setIsCollegeConnectOpen(true)}
+          />
+        )}
+
         {/* TAB 1: SCANNER & ANALYSIS */}
         {activeTab === 'scanner' && (
           <div className="space-y-6">
@@ -299,7 +308,7 @@ export function App() {
           </div>
         )}
 
-        {/* TAB 2: WOUND CARE & MEDICAL RECOVERY (NEW) */}
+        {/* TAB 2: WOUND CARE & MEDICAL RECOVERY */}
         {activeTab === 'woundCare' && (
           <WoundMedicalAnalysisView
             currentPH={estimation?.estimatedPH ?? null}
@@ -378,14 +387,20 @@ export function App() {
       />
 
       {/* Footer */}
-      <footer className="bg-white border-t border-slate-200 mt-12 py-4 text-center text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>
-            <strong>GelScan v2.0 PRO</strong> &bull; B.Pharm Final Year Research Project &bull; {labSettings.collegeName}
-          </span>
-          <span className="text-[11px] text-slate-400">
-            For academic laboratory research use only. Clinical care protocols follow EWMA / TIME guidelines.
-          </span>
+      <footer className="bg-white border-t border-slate-200 mt-12 py-6 text-center text-xs text-slate-500">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="text-left space-y-0.5">
+            <span className="font-bold text-slate-800 block">
+              GelScan v2.0 PRO &bull; Smart Gelatin/Alginate pH Analyzer
+            </span>
+            <span className="text-[11px] text-slate-500 block">
+              Sinhgad Institute of Pharmaceutical Sciences (SIPS), Lonavala &bull; B.Pharm Final Year Capstone Project
+            </span>
+          </div>
+
+          <div className="text-right text-[11px] text-slate-400">
+            Founded by Chetan Wankhede, Tejas Kedar, Bhushan Phate, Athrava Ghursade, Dipak Sangle
+          </div>
         </div>
       </footer>
     </div>

@@ -11,6 +11,7 @@ import {
   Sparkles,
   Layers,
   HeartPulse,
+  Home,
 } from 'lucide-react';
 import { LabSettings } from '../utils/storage';
 
@@ -36,6 +37,7 @@ export const Header: React.FC<HeaderProps> = ({
   selectedCompareCount,
 }) => {
   const navTabs = [
+    { id: 'home', label: 'Overview & Team', icon: Home },
     { id: 'scanner', label: 'Scanner & Analysis', icon: Activity },
     { id: 'woundCare', label: 'Wound Care & Recovery', icon: HeartPulse },
     { id: 'calibration', label: 'Calibration Matrix', icon: Sliders },
@@ -52,7 +54,7 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <span className="bg-teal-500/30 text-teal-200 px-2 py-0.5 rounded font-mono font-semibold tracking-wider text-[11px] border border-teal-400/30">
-              B.PHARM RESEARCH
+              B.PHARM FINAL YEAR
             </span>
             <span className="font-medium text-slate-200 truncate max-w-md">
               {labSettings.collegeName} &bull; {labSettings.department}
@@ -93,8 +95,11 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Main Title & Nav Tabs */}
       <div className="max-w-7xl mx-auto px-4 pt-3 pb-1">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-teal-500/20">
+          <div
+            onClick={() => setActiveTab('home')}
+            className="flex items-center gap-3 cursor-pointer group"
+          >
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-teal-500/20 group-hover:scale-105 transition-transform">
               <Sparkles className="w-6 h-6" />
             </div>
             <div>
@@ -110,7 +115,7 @@ export const Header: React.FC<HeaderProps> = ({
                 </span>
               </div>
               <p className="text-xs text-slate-500">
-                Anthocyanin-sensitive wound dressing film digital colorimetric analysis & clinical diagnostics
+                Sinhgad Institute of Pharmaceutical Sciences, Lonavala
               </p>
             </div>
           </div>

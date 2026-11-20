@@ -19,10 +19,10 @@ export interface LabSettings {
 }
 
 export const DEFAULT_SETTINGS: LabSettings = {
-  collegeName: 'B.Pharm College of Pharmacy & Technology',
+  collegeName: 'Sinhgad Institute of Pharmaceutical Sciences, Lonavala',
   department: 'Department of Pharmaceutics & Biomaterials Research',
   projectGuide: 'Faculty Research Supervisor',
-  defaultOperator: 'Student Researcher',
+  defaultOperator: 'Chetan Bhagwat Wankhede',
   defaultBatchPrefix: 'GA-ANTH-',
   estimationMode: 'interpolated',
   enableWhiteCorrection: false,
@@ -140,7 +140,12 @@ export function loadLabSettings(): LabSettings {
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.SETTINGS);
     if (!raw) return DEFAULT_SETTINGS;
-    return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
+    const parsed = JSON.parse(raw);
+    // If collegeName was the old placeholder, upgrade it to Sinhgad Institute of Pharmaceutical Sciences, Lonavala
+    if (parsed.collegeName === 'B.Pharm College of Pharmacy & Technology') {
+      parsed.collegeName = DEFAULT_SETTINGS.collegeName;
+    }
+    return { ...DEFAULT_SETTINGS, ...parsed };
   } catch {
     return DEFAULT_SETTINGS;
   }
